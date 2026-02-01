@@ -1,16 +1,11 @@
 package router
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+
+	"kerokume-go/services"
 )
 
-
-func foodRoutes(group *gin.RouterGroup){
-	group.GET("/foods", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{
-			"message":"Teste Food",
-		})
-	})
+func foodRoutes(group *gin.RouterGroup) {
+	group.POST("/foods", services.FoodServiceCreate)
 }

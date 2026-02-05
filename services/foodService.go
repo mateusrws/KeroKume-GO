@@ -115,3 +115,18 @@ func FoodServiceUpdate(ctx *gin.Context) {
 	}
 	utils.SendSuccess(ctx, "update-food", []interface{}{})
 }
+
+func FoodServiceDelete(ctx *gin.Context) {
+	foodIdStr := ctx.Param("id")
+	foodId, err := uuid.Parse(foodIdStr)
+	if err != nil {
+		utils.SendError(ctx, http.StatusBadRequest, "invalid food id")
+		return
+	}
+	err = repos.DeleteFood(foodId, ctx)
+	if err != nil {
+		utils.SendError(ctx, http.StatusInternalServerError, "error deleting food")
+		return
+	}
+	utils.SendSuccess(ctx, "delete-food", []interface{}{})
+}

@@ -55,3 +55,12 @@ func UpdateMenu(menuId uuid.UUID, menu *schemas.Menu, ctx *gin.Context) error {
 	}
 	return nil
 }
+
+func DeleteMenu(menuId uuid.UUID, ctx *gin.Context) error {
+	if err := db.Delete(&schemas.Menu{}, menuId).Error; err != nil {
+		logger.Errf("error deleting menu: %v", err)
+		utils.SendError(ctx, http.StatusInternalServerError, "error deleting menu")
+		return err
+	}
+	return nil
+}

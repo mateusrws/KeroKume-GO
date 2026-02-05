@@ -100,3 +100,19 @@ func UpdateRestaurantService(ctx *gin.Context) {
 	}
 	utils.SendSuccess(ctx, "update-restaurant", []interface{}{})
 }
+
+
+func DeleteRestaurantService(ctx *gin.Context){
+	restaurantIdStr := ctx.Param("id")
+	restaurantId, err := uuid.Parse(restaurantIdStr)
+	if err != nil {
+		utils.SendError(ctx, http.StatusInternalServerError, "invalid menu id")
+		return
+	}
+	err = repos.DeleteRestaurant(restaurantId, ctx)
+	if err != nil {
+		utils.SendError(ctx, http.StatusInternalServerError, "error deleting restaurant")
+		return
+	}
+	utils.SendSuccess(ctx, "delete-restaurant", []interface{}{})
+}

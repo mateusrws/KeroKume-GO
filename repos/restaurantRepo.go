@@ -49,3 +49,12 @@ func UpdateRestaurant(restaurantId uuid.UUID, restaurant *schemas.Restaurant, ct
 	}
 	return nil
 }
+
+func DeleteRestaurant(restaurantId uuid.UUID, ctx *gin.Context) error {
+	if err := db.Delete(&schemas.Restaurant{}, restaurantId).Error; err != nil {
+		logger.Errf("error deleting restaurant: %v", err)
+		utils.SendError(ctx, http.StatusInternalServerError, "error deleting restaurant")
+		return err
+	}
+	return nil
+}

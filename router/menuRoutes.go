@@ -11,4 +11,5 @@ func menutRoutes(group *gin.RouterGroup) {
 	group.GET("/menus/:id", services.GetMenuServiceGetByRestaurantID)
 	group.POST("/menu", services.CreateMenuService)
 	group.PUT("/menu/:id", services.UpdateMenuService)
+	group.DELETE("/menu/:id", services.DeleteMenuService)
 }

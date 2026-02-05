@@ -68,3 +68,11 @@ func UpdateFood(foodId uuid.UUID, food *schemas.Food, ctx *gin.Context) error {
 	return nil
 }
 
+func DeleteFood(foodId uuid.UUID, ctx *gin.Context) error {
+	if err := db.Delete(&schemas.Food{}, foodId).Error; err != nil {
+		logger.Errf("error deleting food: %v", err)
+		utils.SendError(ctx, http.StatusInternalServerError, "error deleting food")
+		return err
+	}
+	return nil
+}

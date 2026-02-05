@@ -105,3 +105,18 @@ func UpdateMenuService(ctx *gin.Context) {
 	}
 	utils.SendSuccess(ctx, "update-menu", []interface{}{})
 }
+
+func DeleteMenuService(ctx *gin.Context) {
+	menuIdStr := ctx.Param("id")
+	menuId, err := uuid.Parse(menuIdStr)
+	if err != nil {
+		utils.SendError(ctx, http.StatusBadRequest, "invalid menu id")
+		return
+	}
+	err = repos.DeleteMenu(menuId, ctx)
+	if err != nil {
+		utils.SendError(ctx, http.StatusInternalServerError, "error deleting menu")
+		return
+	}
+	utils.SendSuccess(ctx, "delete-menu", []interface{}{})
+}

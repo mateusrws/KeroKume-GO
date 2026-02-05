@@ -18,7 +18,7 @@ func SaveFood(food *schemas.Food, ctx *gin.Context) {
 		return
 	}
 
-	utils.SendSuccess(ctx, "create-food")
+	utils.SendSuccess(ctx, "create-food", []interface{}{})
 }
 
 // Find Food by ID
@@ -33,3 +33,38 @@ func FindUniqueFood(id uuid.UUID, ctx *gin.Context) (*schemas.Food, error) {
 
 	return &food, nil
 }
+
+func FindAllFood(ctx *gin.Context) ([]schemas.Food, error) {
+	var foods []schemas.Food
+
+	if err := db.Find(&foods).Error; err != nil {
+		logger.Errf("error finding all foods: %v", err)
+		utils.SendError(ctx, http.StatusInternalServerError, "error finding all foods")
+		return nil, err
+	}
+
+	return foods, nil
+}
+
+func FindAllFoodByMenuId(menuId uuid.UUID, ctx *gin.Context) ([]schemas.Food, error) {
+	var foods []schemas.Food
+
+	if err := db.Where("menu_id = ?", menuId).Find(&foods).Error; err != nil {
+		logger.Errf("error finding all foods by menu id: %v", err)
+		utils.SendError(ctx, http.StatusInternalServerError, "error finding all foods by menu id")
+		return nil, err
+	}
+
+	return foods, nil
+}
+
+
+func UpdateFood(foodId uuid.UUID, food *schemas.Food, ctx *gin.Context) error {
+	if err := db.Model(&schemas.Food{}).Where("id = ?", foodId).Updates(food).Error; err != nil {
+		logger.Errf("error updating food: %v", err)
+		utils.SendError(ctx, http.StatusInternalServerError, "error updating food")
+		return err
+	}
+	return nil
+}
+

@@ -26,3 +26,32 @@ func FindUniqueMenu(id uuid.UUID, ctx *gin.Context) (schemas.Menu, error) {
 	}
 	return menu, nil
 }
+
+func FindAllMenu(ctx *gin.Context) ([]schemas.Menu, error) {
+	var menus []schemas.Menu
+	if err := db.Find(&menus).Error; err != nil {
+		logger.Errf("error finding all menus: %v", err)
+		utils.SendError(ctx, http.StatusInternalServerError, "error finding all menus")
+		return nil, err
+	}
+	return menus, nil
+}
+
+func FindAllByRestaurantId(restaurantId uuid.UUID, ctx *gin.Context) ([]schemas.Menu, error) {
+	var menus []schemas.Menu
+	if err := db.Where("restaurant_id = ?", restaurantId).Find(&menus).Error; err != nil {
+		logger.Errf("error finding all menus by restaurant id: %v", err)
+		utils.SendError(ctx, http.StatusInternalServerError, "error finding all menus by restaurant id")
+		return nil, err
+	}
+	return menus, nil
+}
+
+func UpdateMenu(menuId uuid.UUID, menu *schemas.Menu, ctx *gin.Context) error {
+	if err := db.Model(&schemas.Menu{}).Where("id = ?", menuId).Updates(menu).Error; err != nil {
+		logger.Errf("error updating menu: %v", err)
+		utils.SendError(ctx, http.StatusInternalServerError, "error updating menu")
+		return err
+	}
+	return nil
+}

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 
 	"kerokume-go/repos"
 	"kerokume-go/schemas"
@@ -41,5 +42,66 @@ func CreateMenuService(ctx *gin.Context) {
 		return
 	}
 
-	utils.SendSuccess(ctx, "create-menu")
+	utils.SendSuccess(ctx, "create-menu", []interface{}{})
+}
+
+func GetAllMenuService(ctx *gin.Context) {
+	menus, err := repos.FindAllMenu(ctx)
+	if err != nil {
+		utils.SendError(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
+	data := make([]interface{}, len(menus))
+	for i := range menus {
+		data[i] = menus[i]
+	}
+	utils.SendSuccess(ctx, "find-all-menus", data)
+}
+
+func GetMenuServiceGetByRestaurantID(ctx *gin.Context) {
+	restaurantIdStr := ctx.Param("id")
+	restaurantId, err := uuid.Parse(restaurantIdStr)
+	if err != nil {
+		utils.SendError(ctx, http.StatusBadRequest, "invalid restaurant id")
+		return
+	}
+	menus, err := repos.FindAllByRestaurantId(restaurantId, ctx)
+	if err != nil {
+		utils.SendError(ctx, http.StatusInternalServerError, "error finding all menus by restaurant id")
+		return
+	}
+	data := make([]interface{}, len(menus))
+	for i := range menus {
+		data[i] = menus[i]
+	}
+	utils.SendSuccess(ctx, "find-all-menus-by-restaurant-id", data)
+}
+
+func UpdateMenuService(ctx *gin.Context) {
+	var dto contracts.MenuRequest
+	if err := ctx.BindJSON(&dto); err != nil {
+		utils.SendError(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+	if err := validates.ValidateCreateMenu(&dto); err != nil {
+		utils.SendError(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+	menuIdStr := ctx.Param("id")
+	menuId, err := uuid.Parse(menuIdStr)
+	if err != nil {
+		utils.SendError(ctx, http.StatusBadRequest, "invalid menu id")
+		return
+	}
+
+	menu := schemas.Menu{
+		Name:         dto.Name,
+		RestaurantId: dto.RestaurantId,
+	}
+
+	if err := repos.UpdateMenu(menuId, &menu, ctx); err != nil {
+		utils.SendError(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
+	utils.SendSuccess(ctx, "update-menu", []interface{}{})
 }

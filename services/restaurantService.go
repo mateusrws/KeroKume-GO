@@ -1,7 +1,10 @@
 package services
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 
 	"kerokume-go/repos"
 	"kerokume-go/schemas"
@@ -36,4 +39,64 @@ func RestaurantServiceCreate(ctx *gin.Context) {
 	}
 
 	repos.SaveRestaurant(restaurant, ctx)
+}
+
+func GetAllRestaurantService(ctx *gin.Context) {
+	restaurants, err := repos.FindAllRestaurant(ctx)
+	if err != nil {
+		utils.SendError(ctx, http.StatusInternalServerError, "error finding all restaurants")
+		return
+	}
+	utils.SendSuccess(ctx, "find-all-restaurants", []interface{}{restaurants})
+}
+
+func GetRestaurantServiceGetByID(ctx *gin.Context) {
+	restaurantIdStr := ctx.Param("id")
+	restaurantId, err := uuid.Parse(restaurantIdStr)
+	if err != nil {
+		utils.SendError(ctx, http.StatusBadRequest, "invalid restaurant id")
+		return
+	}
+	restaurants, err := repos.FindUniqueRestaurant(restaurantId, ctx)
+	if err != nil {
+		utils.SendError(ctx, http.StatusInternalServerError, "error finding restaurant by id")
+		return
+	}
+	utils.SendSuccess(ctx, "find-restaurant-by-id", []interface{}{restaurants})
+}
+
+func UpdateRestaurantService(ctx *gin.Context) {
+	var dto contracts.RestaurantRequest
+	if err := ctx.BindJSON(&dto); err != nil {
+		utils.SendError(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+	if err := validates.ValidateUpdateRestaurant(&dto); err != nil {
+		utils.SendError(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+	restaurantIdStr := ctx.Param("id")
+	restaurantId, err := uuid.Parse(restaurantIdStr)
+	if err != nil {
+		utils.SendError(ctx, http.StatusBadRequest, "invalid restaurant id")
+		return
+	}
+
+	restaurant, err := repos.FindUniqueRestaurant(restaurantId, ctx)
+	if err != nil {
+		utils.SendError(ctx, http.StatusInternalServerError, "error finding restaurant by id")
+		return
+	}
+
+	restaurant = schemas.Restaurant{
+		Name:        dto.Name,
+		Description: dto.Description,
+		Password:    restaurant.Password,
+	}
+
+	if err := repos.UpdateRestaurant(restaurantId, &restaurant, ctx); err != nil {
+		utils.SendError(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
+	utils.SendSuccess(ctx, "update-restaurant", []interface{}{})
 }

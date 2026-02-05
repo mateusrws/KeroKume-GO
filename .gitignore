@@ -12,3 +12,7 @@
 # Coverage
 
 *.out
+
+# enviroments
+
+.env

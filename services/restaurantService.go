@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
+	"kerokume-go/config"
 	"kerokume-go/repos"
 	"kerokume-go/schemas"
 	"kerokume-go/schemas/contracts"
@@ -14,6 +15,7 @@ import (
 )
 
 func RestaurantServiceCreate(ctx *gin.Context) {
+	logger := config.NewLogger("RESTAURANT CREATE HANDLER")
 	var dto contracts.RestaurantRequest
 	if err := ctx.BindJSON(&dto); err != nil {
 		utils.SendError(ctx, 400, err.Error())
@@ -39,6 +41,8 @@ func RestaurantServiceCreate(ctx *gin.Context) {
 	}
 
 	repos.SaveRestaurant(restaurant, ctx)
+
+	utils.SendSuccess(ctx, "create-restaurant")
 }
 
 func GetAllRestaurantService(ctx *gin.Context) {
@@ -47,7 +51,16 @@ func GetAllRestaurantService(ctx *gin.Context) {
 		utils.SendError(ctx, http.StatusInternalServerError, "error finding all restaurants")
 		return
 	}
-	utils.SendSuccess(ctx, "find-all-restaurants", []interface{}{restaurants})
+	data := make([]interface{}, len(restaurants))
+	for i := range restaurants{
+		data[i] = contracts.RestaurantResponse{
+			Id: restaurants[i].ID,
+			Name: restaurants[i].Name,
+			Email: restaurants[i].Email,
+		}
+	}
+	
+	utils.SendSuccessArray(ctx, "find-all-restaurants", []interface{}{restaurants})
 }
 
 func GetRestaurantServiceGetByID(ctx *gin.Context) {
@@ -62,7 +75,7 @@ func GetRestaurantServiceGetByID(ctx *gin.Context) {
 		utils.SendError(ctx, http.StatusInternalServerError, "error finding restaurant by id")
 		return
 	}
-	utils.SendSuccess(ctx, "find-restaurant-by-id", []interface{}{restaurants})
+	utils.SendSuccessArray(ctx, "update-restaurant", []interface{}{restaurants})
 }
 
 func UpdateRestaurantService(ctx *gin.Context) {
@@ -98,8 +111,9 @@ func UpdateRestaurantService(ctx *gin.Context) {
 		utils.SendError(ctx, http.StatusInternalServerError, err.Error())
 		return
 	}
-	utils.SendSuccess(ctx, "update-restaurant", []interface{}{})
+	utils.SendSuccessSimple(ctx, "update-restaurant", restaurant)
 }
+
 
 
 func DeleteRestaurantService(ctx *gin.Context){
@@ -114,5 +128,5 @@ func DeleteRestaurantService(ctx *gin.Context){
 		utils.SendError(ctx, http.StatusInternalServerError, "error deleting restaurant")
 		return
 	}
-	utils.SendSuccess(ctx, "delete-restaurant", []interface{}{})
+	utils.SendSuccess(ctx, "delete-restaurant") 
 }

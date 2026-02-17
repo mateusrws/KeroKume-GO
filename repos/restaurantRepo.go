@@ -1,12 +1,15 @@
 package repos
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 
 	"kerokume-go/schemas"
+	"kerokume-go/schemas/contracts"
 	"kerokume-go/utils"
 )
 
@@ -18,7 +21,7 @@ func SaveRestaurant(restaurant schemas.Restaurant, ctx *gin.Context) {
 		utils.SendError(ctx, http.StatusInternalServerError, "error creating restaurant on database")
 		return
 	}
-	utils.SendSuccess(ctx, "create-restaurant", []interface{}{})
+	utils.SendSuccessArray(ctx, "create-restaurant", []interface{}{})
 }
 
 func FindUniqueRestaurant(id uuid.UUID, ctx *gin.Context) (schemas.Restaurant, error) {
@@ -40,6 +43,25 @@ func FindAllRestaurant(ctx *gin.Context) ([]schemas.Restaurant, error) {
 	}
 	return restaurants, nil
 }
+
+func FindUniqueByEmail(dto contracts.LoginRequest, ctx *gin.Context) (*schemas.Restaurant, error) {
+	var restaurant schemas.Restaurant
+
+	err := db.Where("email = ?", dto.Email).First(&restaurant).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			utils.SendError(ctx, http.StatusUnauthorized, "invalid email or password")
+			return nil, err
+		}
+
+		utils.SendError(ctx, http.StatusInternalServerError, "invalid email or password")
+		return nil, err
+	}
+
+	return &restaurant, nil
+}
+
+
 
 func UpdateRestaurant(restaurantId uuid.UUID, restaurant *schemas.Restaurant, ctx *gin.Context) error {
 	if err := db.Model(&schemas.Restaurant{}).Where("id = ?", restaurantId).Updates(restaurant).Error; err != nil {

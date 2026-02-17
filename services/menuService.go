@@ -42,7 +42,7 @@ func CreateMenuService(ctx *gin.Context) {
 		return
 	}
 
-	utils.SendSuccess(ctx, "create-menu", []interface{}{})
+	utils.SendSuccessSimple(ctx, "create-menu", menu)
 }
 
 func GetAllMenuService(ctx *gin.Context) {
@@ -53,9 +53,12 @@ func GetAllMenuService(ctx *gin.Context) {
 	}
 	data := make([]interface{}, len(menus))
 	for i := range menus {
-		data[i] = menus[i]
+		data[i] = contracts.MenuResponse{
+			Id: menus[i].ID,
+			Name: menus[i].Name,
+		}
 	}
-	utils.SendSuccess(ctx, "find-all-menus", data)
+	utils.SendSuccessArray(ctx, "find-all-menus", data)
 }
 
 func GetMenuServiceGetByRestaurantID(ctx *gin.Context) {
@@ -72,9 +75,12 @@ func GetMenuServiceGetByRestaurantID(ctx *gin.Context) {
 	}
 	data := make([]interface{}, len(menus))
 	for i := range menus {
-		data[i] = menus[i]
+		data[i] = contracts.MenuResponse{
+			Id: menus[i].ID,
+			Name: menus[i].Name,
+		}
 	}
-	utils.SendSuccess(ctx, "find-all-menus-by-restaurant-id", data)
+	utils.SendSuccessArray(ctx, "find-all-menus-by-restaurant-id", data)
 }
 
 func UpdateMenuService(ctx *gin.Context) {
@@ -103,7 +109,7 @@ func UpdateMenuService(ctx *gin.Context) {
 		utils.SendError(ctx, http.StatusInternalServerError, err.Error())
 		return
 	}
-	utils.SendSuccess(ctx, "update-menu", []interface{}{})
+	utils.SendSuccess(ctx, "update-menu")
 }
 
 func DeleteMenuService(ctx *gin.Context) {
@@ -118,5 +124,5 @@ func DeleteMenuService(ctx *gin.Context) {
 		utils.SendError(ctx, http.StatusInternalServerError, "error deleting menu")
 		return
 	}
-	utils.SendSuccess(ctx, "delete-menu", []interface{}{})
+	utils.SendSuccess(ctx, "delete-menu")
 }

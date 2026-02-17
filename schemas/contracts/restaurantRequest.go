@@ -1,7 +1,8 @@
 package contracts
 
 type RestaurantRequest struct {
-	Name string `json: "name"`
+	Name 				string `json: "name"`
 	Description string `json: "description"`
-	Password string `json: "pass"`
+	Email 			string `json: "email"`
+	Password 		string `json: "pass"`
 }

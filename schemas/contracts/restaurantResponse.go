@@ -1,7 +1,10 @@
 package contracts
 
+import "github.com/google/uuid"
+
 type RestaurantResponse struct {
-	id uint `json: "id"`
-	name string `json: "name"`
-	description string `json: "description"`
+	Id					uuid.UUID `json: "id"`
+	Name 				string `json: "name`
+	Email 			string `json: "email"`
+	Description string `json: "description"`
 }

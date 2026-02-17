@@ -18,7 +18,7 @@ func SaveFood(food *schemas.Food, ctx *gin.Context) {
 		return
 	}
 
-	utils.SendSuccess(ctx, "create-food", []interface{}{})
+	return
 }
 
 // Find Food by ID

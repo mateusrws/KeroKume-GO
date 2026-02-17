@@ -17,6 +17,9 @@ func ValidateCreateRestaurant(r *contracts.RestaurantRequest) error {
 	if r.Description == "" {
 		return utils.ParamIsRequired("description", "string")
 	}
+	if r.Email == ""{
+		return utils.ParamIsRequired("email", "string")
+	}
 	if r.Password == "" {
 		return utils.ParamIsRequired("pass", "string")
 	}

@@ -49,6 +49,7 @@ func FoodServiceCreate(ctx *gin.Context) {
 	}
 
 	repos.SaveFood(&food, ctx)
+	utils.SendSuccess(ctx, "create-food")
 }
 
 func FoodServiceGetAll(ctx *gin.Context) {
@@ -59,9 +60,17 @@ func FoodServiceGetAll(ctx *gin.Context) {
 	}
 	data := make([]interface{}, len(foods))
 	for i := range foods {
-		data[i] = foods[i]
+		data[i] = contracts.FoodResponse{
+			Id: foods[i].ID,
+			Name: foods[i].Name,
+			Description: foods[i].Description,
+			Price: foods[i].Price,
+			PathImg: foods[i].PathImg,
+			FoodCategory: foods[i].FoodCategory,
+			IsAvailable: foods[i].IsAvailable,
+		}
 	}
-	utils.SendSuccess(ctx, "find-all-foods", data)
+	utils.SendSuccessArray(ctx, "find-all-foods", data)
 }
 
 func FoodServiceGetByMenuID(ctx *gin.Context) {
@@ -78,12 +87,21 @@ func FoodServiceGetByMenuID(ctx *gin.Context) {
 	}
 	data := make([]interface{}, len(foods))
 	for i := range foods {
-		data[i] = foods[i]
+		data[i] = contracts.FoodResponse{
+			Id: foods[i].ID,
+			Name: foods[i].Name,
+			Description: foods[i].Description,
+			Price: foods[i].Price,
+			PathImg: foods[i].PathImg,
+			FoodCategory: foods[i].FoodCategory,
+			IsAvailable: foods[i].IsAvailable,
+		}
 	}
-	utils.SendSuccess(ctx, "find-all-foods-by-menu-id", data)
+	utils.SendSuccessArray(ctx, "find-all-foods-by-menu-id", data)
 }
 
 func FoodServiceUpdate(ctx *gin.Context) {
+	logger := config.NewLogger("FOOD UPDATE HANDLER")
 	var dto contracts.FoodRequest
 	if err := ctx.BindJSON(&dto); err != nil {
 		utils.SendError(ctx, 400, err.Error())
@@ -113,7 +131,7 @@ func FoodServiceUpdate(ctx *gin.Context) {
 		utils.SendError(ctx, http.StatusInternalServerError, "error updating food")
 		return
 	}
-	utils.SendSuccess(ctx, "update-food", []interface{}{})
+	utils.SendSuccess(ctx, "update-food")
 }
 
 func FoodServiceDelete(ctx *gin.Context) {
@@ -128,5 +146,5 @@ func FoodServiceDelete(ctx *gin.Context) {
 		utils.SendError(ctx, http.StatusInternalServerError, "error deleting food")
 		return
 	}
-	utils.SendSuccess(ctx, "delete-food", []interface{}{})
+	utils.SendSuccess(ctx, "delete-food")
 }

@@ -47,8 +47,9 @@ func FindAllByRestaurantId(restaurantId uuid.UUID, ctx *gin.Context) ([]schemas.
 	return menus, nil
 }
 
-func UpdateMenu(menuId uuid.UUID, menu *schemas.Menu, ctx *gin.Context) error {
-	if err := db.Model(&schemas.Menu{}).Where("id = ?", menuId).Updates(menu).Error; err != nil {
+
+func UpdateMenu(restaurantId uuid.UUID, menuId uuid.UUID, menu *schemas.Menu, ctx *gin.Context) error {
+	if err := db.Model(&schemas.Menu{}).Where("id = ? AND restaurant_id = ?", menuId, restaurantId).Updates(menu).Error; err != nil {
 		logger.Errf("error updating menu: %v", err)
 		utils.SendError(ctx, http.StatusInternalServerError, "error updating menu")
 		return err

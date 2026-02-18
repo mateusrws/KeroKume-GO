@@ -14,6 +14,18 @@ import (
 	"kerokume-go/utils"
 )
 
+// TODO Configurar o CRUD do Food para o swagger 
+
+// @Summary Create Food
+// @Description Create a new food
+// @Tags Food
+// @Accept json
+// @Produce json
+// @Param request body contracts.FoodRequest true "Request body"
+// @Success 200 {object} contracts.FoodResponse
+// @Failure 400 {object} contracts.ErrorResponse
+// @Failure 500 {object} contracts.ErrorResponse
+// @Router /foods [post]
 func FoodServiceCreate(ctx *gin.Context) {
 	logger := config.NewLogger("FOOD CREATE HANDLER")
 	var dto contracts.FoodRequest
@@ -52,6 +64,14 @@ func FoodServiceCreate(ctx *gin.Context) {
 	utils.SendSuccess(ctx, "create-food")
 }
 
+
+// @Summary Get All Foods
+// @Description Get all foods
+// @Tags Food
+// @Produce json
+// @Success 200 {array} contracts.FoodResponse
+// @Failure 500 {object} contracts.ErrorResponse
+// @Router /foods [get]
 func FoodServiceGetAll(ctx *gin.Context) {
 	foods, err := repos.FindAllFood(ctx)
 	if err != nil {
@@ -73,6 +93,16 @@ func FoodServiceGetAll(ctx *gin.Context) {
 	utils.SendSuccessArray(ctx, "find-all-foods", data)
 }
 
+
+// @Summary Get Foods by Menu
+// @Description Get all foods by menu id
+// @Tags Food
+// @Produce json
+// @Param id path string true "Menu ID"
+// @Success 200 {array} contracts.FoodResponse
+// @Failure 400 {object} contracts.ErrorResponse
+// @Failure 500 {object} contracts.ErrorResponse
+// @Router /menus/{id}/foods [get]
 func FoodServiceGetByMenuID(ctx *gin.Context) {
 	menuIdStr := ctx.Param("id")
 	menuId, err := uuid.Parse(menuIdStr)
@@ -100,6 +130,18 @@ func FoodServiceGetByMenuID(ctx *gin.Context) {
 	utils.SendSuccessArray(ctx, "find-all-foods-by-menu-id", data)
 }
 
+
+// @Summary Update Food
+// @Description Update food by id
+// @Tags Food
+// @Accept json
+// @Produce json
+// @Param id path string true "Food ID"
+// @Param request body contracts.FoodRequest true "Request body"
+// @Success 200 {object} contracts.FoodResponse
+// @Failure 400 {object} contracts.ErrorResponse
+// @Failure 500 {object} contracts.ErrorResponse
+// @Router /foods/{id} [put]
 func FoodServiceUpdate(ctx *gin.Context) {
 	logger := config.NewLogger("FOOD UPDATE HANDLER")
 	var dto contracts.FoodRequest
@@ -125,8 +167,10 @@ func FoodServiceUpdate(ctx *gin.Context) {
 		FoodCategory: dto.FoodCategory,
 		MenuId:       dto.MenuId,
 	}
+	
+	restaurantId := utils.GetIdFromJwt(ctx)
 
-	err = repos.UpdateFood(foodId, &food, ctx)
+	err = repos.UpdateFood(restaurantId, foodId, &food, ctx)
 	if err != nil {
 		utils.SendError(ctx, http.StatusInternalServerError, "error updating food")
 		return
@@ -134,6 +178,15 @@ func FoodServiceUpdate(ctx *gin.Context) {
 	utils.SendSuccess(ctx, "update-food")
 }
 
+
+// @Summary Delete Food
+// @Description Delete food by id
+// @Tags Food
+// @Param id path string true "Food ID"
+// @Success 200 "Food deleted successfully"
+// @Failure 400 {object} contracts.ErrorResponse
+// @Failure 500 {object} contracts.ErrorResponse
+// @Router /foods/{id} [delete]
 func FoodServiceDelete(ctx *gin.Context) {
 	foodIdStr := ctx.Param("id")
 	foodId, err := uuid.Parse(foodIdStr)

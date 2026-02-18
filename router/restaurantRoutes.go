@@ -12,6 +12,6 @@ func restaurantRoutes(group *gin.RouterGroup) {
 	group.GET("/restaurants/:id",middlewares.Auth(),services.GetRestaurantServiceGetByID)
 	group.POST("/restaurant",services.RestaurantServiceCreate)
 	group.POST("/login", services.LoginService)
-	group.PUT("/restaurant/:id",middlewares.Auth(),services.UpdateRestaurantService)
+	group.PUT("/restaurant/",middlewares.Auth(),services.UpdateRestaurantService)
 	group.DELETE("/restaurant/:id",middlewares.Auth(),services.DeleteRestaurantService)
 }

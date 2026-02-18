@@ -1,0 +1,429 @@
+definitions:
+  contracts.ErrorResponse:
+    properties:
+      errorCode:
+        type: string
+      message:
+        type: string
+    type: object
+  contracts.FoodRequest:
+    properties:
+      category:
+        type: string
+      description:
+        type: string
+      menu:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  contracts.FoodResponse:
+    properties:
+      description:
+        type: string
+      foodCategory:
+        type: string
+      id:
+        type: string
+      isAvailable:
+        type: boolean
+      name:
+        type: string
+      pathImg:
+        type: string
+      price:
+        type: number
+    type: object
+  contracts.MenuRequest:
+    properties:
+      name:
+        type: string
+      restaurantId:
+        type: string
+    type: object
+  contracts.MenuResponse:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  contracts.RestaurantRequest:
+    properties:
+      description:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  contracts.RestaurantResponse:
+    properties:
+      description:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /foods:
+    get:
+      description: Get all foods
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/contracts.FoodResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+      summary: Get All Foods
+      tags:
+      - Food
+    post:
+      consumes:
+      - application/json
+      description: Create a new food
+      parameters:
+      - description: Request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/contracts.FoodRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/contracts.FoodResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+      summary: Create Food
+      tags:
+      - Food
+  /foods/{id}:
+    delete:
+      description: Delete food by id
+      parameters:
+      - description: Food ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Food deleted successfully
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+      summary: Delete Food
+      tags:
+      - Food
+    put:
+      consumes:
+      - application/json
+      description: Update food by id
+      parameters:
+      - description: Food ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/contracts.FoodRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/contracts.FoodResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+      summary: Update Food
+      tags:
+      - Food
+  /menus:
+    get:
+      description: Get all menus
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/contracts.MenuResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+      summary: Get All Menus
+      tags:
+      - Menu
+    post:
+      consumes:
+      - application/json
+      description: Create a new menu for a restaurant
+      parameters:
+      - description: Request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/contracts.MenuRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/contracts.MenuResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+      summary: Create Menu
+      tags:
+      - Menu
+  /menus/{id}:
+    delete:
+      description: Delete menu by id
+      parameters:
+      - description: Menu ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Menu deleted successfully
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+      summary: Delete Menu
+      tags:
+      - Menu
+    put:
+      consumes:
+      - application/json
+      description: Update menu by id
+      parameters:
+      - description: Menu ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/contracts.MenuRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/contracts.MenuResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+      summary: Update Menu
+      tags:
+      - Menu
+  /menus/{id}/foods:
+    get:
+      description: Get all foods by menu id
+      parameters:
+      - description: Menu ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/contracts.FoodResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+      summary: Get Foods by Menu
+      tags:
+      - Food
+  /restaurant:
+    delete:
+      description: Delete restaurant
+      responses:
+        "200":
+          description: Restaurant deleted successfully
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+      summary: Delete Restaurant
+      tags:
+      - Restaurant
+    post:
+      consumes:
+      - application/json
+      description: Create a new restaurant
+      parameters:
+      - description: Request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/contracts.RestaurantRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/contracts.RestaurantResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+      summary: Create Restaurant
+      tags:
+      - Restaurant
+    put:
+      description: Update restaurant
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/contracts.RestaurantResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+      summary: Update Restaurant
+      tags:
+      - Restaurant
+  /restaurants:
+    get:
+      description: Get All Restaurants
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/contracts.RestaurantResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+      summary: Get Restaurants
+      tags:
+      - Restaurant
+  /restaurants/{id}/menus:
+    get:
+      description: Get all menus by restaurant id
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/contracts.MenuResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/contracts.ErrorResponse'
+      summary: Get Menus by Restaurant
+      tags:
+      - Menu
+swagger: "2.0"

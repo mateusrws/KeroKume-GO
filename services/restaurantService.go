@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 
 	"kerokume-go/config"
 	"kerokume-go/repos"
@@ -14,6 +13,18 @@ import (
 	"kerokume-go/utils"
 )
 
+// @BasePath /api/v1
+
+// @Summary Create Restaurant 
+// @Description Create a new restaurant
+// @Tags Restaurant 
+// @Accept json
+// @Produce json
+// @Param request body contracts.RestaurantRequest true "Request body"
+// @Success 200 {object} contracts.RestaurantResponse
+// @Failure 400 {object} contracts.ErrorResponse
+// @Failure 500 {object} contracts.ErrorResponse
+// @Router /restaurant [post]
 func RestaurantServiceCreate(ctx *gin.Context) {
 	logger := config.NewLogger("RESTAURANT CREATE HANDLER")
 	var dto contracts.RestaurantRequest
@@ -45,6 +56,16 @@ func RestaurantServiceCreate(ctx *gin.Context) {
 	utils.SendSuccess(ctx, "create-restaurant")
 }
 
+// TODO Adicionar a configuração para o swagger para o GetAllRestaurantService
+
+// @Summary Get Restaurants
+// @Description Get All Restaurants
+// @Tags Restaurant
+// Accept json
+// @Produce json
+// @Success 200 {array} contracts.RestaurantResponse
+// @Failure 500 {object} contracts.ErrorResponse
+// @Router /restaurants [get]
 func GetAllRestaurantService(ctx *gin.Context) {
 	restaurants, err := repos.FindAllRestaurant(ctx)
 	if err != nil {
@@ -63,13 +84,17 @@ func GetAllRestaurantService(ctx *gin.Context) {
 	utils.SendSuccessArray(ctx, "find-all-restaurants", []interface{}{restaurants})
 }
 
+// TODO Adicionar a configuração para o swagger para o GerRestaurantServiceGetById
+// @Summary Get Restaurants
+// @Description Get All Restaurants
+// @Tags Restaurant
+// Accept json
+// @Produce json
+// @Success 200 {array} contracts.RestaurantResponse
+// @Failure 500 {object} contracts.ErrorResponse
+// @Router /restaurants [get]
 func GetRestaurantServiceGetByID(ctx *gin.Context) {
-	restaurantIdStr := ctx.Param("id")
-	restaurantId, err := uuid.Parse(restaurantIdStr)
-	if err != nil {
-		utils.SendError(ctx, http.StatusBadRequest, "invalid restaurant id")
-		return
-	}
+	restaurantId := utils.GetIdFromJwt(ctx)
 	restaurants, err := repos.FindUniqueRestaurant(restaurantId, ctx)
 	if err != nil {
 		utils.SendError(ctx, http.StatusInternalServerError, "error finding restaurant by id")
@@ -78,6 +103,14 @@ func GetRestaurantServiceGetByID(ctx *gin.Context) {
 	utils.SendSuccessArray(ctx, "update-restaurant", []interface{}{restaurants})
 }
 
+// TODO Adicionar a configuração para o swagger para o UpdateRestaurantService
+// @Summary Update Restaurant 
+// @Description Update restaurant
+// @Tags Restaurant 
+// @Success 200 {object} contracts.RestaurantResponse
+// @Failure 400 {object} contracts.ErrorResponse
+// @Failure 500 {object} contracts.ErrorResponse
+// @Router /restaurant [put]
 func UpdateRestaurantService(ctx *gin.Context) {
 	var dto contracts.RestaurantRequest
 	if err := ctx.BindJSON(&dto); err != nil {
@@ -88,12 +121,7 @@ func UpdateRestaurantService(ctx *gin.Context) {
 		utils.SendError(ctx, http.StatusBadRequest, err.Error())
 		return
 	}
-	restaurantIdStr := ctx.Param("id")
-	restaurantId, err := uuid.Parse(restaurantIdStr)
-	if err != nil {
-		utils.SendError(ctx, http.StatusBadRequest, "invalid restaurant id")
-		return
-	}
+	restaurantId := utils.GetIdFromJwt(ctx)
 
 	restaurant, err := repos.FindUniqueRestaurant(restaurantId, ctx)
 	if err != nil {
@@ -111,19 +139,22 @@ func UpdateRestaurantService(ctx *gin.Context) {
 		utils.SendError(ctx, http.StatusInternalServerError, err.Error())
 		return
 	}
-	utils.SendSuccessSimple(ctx, "update-restaurant", restaurant)
+
+	utils.SendSuccess(ctx, "update-restaurant")
 }
 
 
-
+// TODO Adicionar a configuração para o swagger para o DeleteRestaurantService
+// @Summary Delete Restaurant 
+// @Description Delete restaurant
+// @Tags Restaurant 
+// @Success 200 "Restaurant deleted successfully"
+// @Failure 400 {object} contracts.ErrorResponse
+// @Failure 500 {object} contracts.ErrorResponse
+// @Router /restaurant [delete]
 func DeleteRestaurantService(ctx *gin.Context){
-	restaurantIdStr := ctx.Param("id")
-	restaurantId, err := uuid.Parse(restaurantIdStr)
-	if err != nil {
-		utils.SendError(ctx, http.StatusInternalServerError, "invalid menu id")
-		return
-	}
-	err = repos.DeleteRestaurant(restaurantId, ctx)
+	restaurantId := utils.GetIdFromJwt(ctx)
+	err := repos.DeleteRestaurant(restaurantId, ctx)
 	if err != nil {
 		utils.SendError(ctx, http.StatusInternalServerError, "error deleting restaurant")
 		return

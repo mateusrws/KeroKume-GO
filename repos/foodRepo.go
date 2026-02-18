@@ -59,8 +59,8 @@ func FindAllFoodByMenuId(menuId uuid.UUID, ctx *gin.Context) ([]schemas.Food, er
 }
 
 
-func UpdateFood(foodId uuid.UUID, food *schemas.Food, ctx *gin.Context) error {
-	if err := db.Model(&schemas.Food{}).Where("id = ?", foodId).Updates(food).Error; err != nil {
+func UpdateFood(restaurantId uuid.UUID, foodId uuid.UUID, food *schemas.Food, ctx *gin.Context) error {
+	if err := db.Model(&schemas.Food{}).Joins("JOIN menus ON menus.id = foods.menu_id").Where("id = ? AND menus.restaurant_id = ?", foodId, restaurantId).Updates(food).Error; err != nil {
 		logger.Errf("error updating food: %v", err)
 		utils.SendError(ctx, http.StatusInternalServerError, "error updating food")
 		return err

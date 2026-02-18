@@ -14,7 +14,7 @@ func (s *JwtType) GenerateToken(id uuid.UUID, ctx *gin.Context) (string, error) 
 	claim := Claim{
 		Sum: id,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 2).Unix(),
+			ExpiresAt: time.Now().Add(time.Hour * 12).Unix(),
 			Issuer:    s.Issuer,
 			IssuedAt:  time.Now().Unix(),
 		},

@@ -6,6 +6,7 @@ APP_NAME = kerokume
 default: run-with-docs
 
 run:
+    @go clear
 	@go run main.go
 run-with-docs:
 	@swag init -g main.go --parseDependency --parseInternal

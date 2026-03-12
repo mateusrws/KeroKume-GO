@@ -16,3 +16,7 @@
 # enviroments
 
 .env
+
+# libraries
+
+node_modules

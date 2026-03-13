@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom"
+
 function App() {
   const categories = [
     'Comida Brasileira',
@@ -24,13 +26,15 @@ function App() {
         'Fotos, descrições e destaques de pratos com uma paleta quente que remete ao clima de restaurante.',
     },
   ]
+  
+  const nav = useNavigate()
 
   return (
     <div className="flex min-h-screen items-center bg-gradient-to-b from-[var(--bg-from)] via-[var(--bg-via)] to-[var(--bg-to)] text-[var(--text-base)]">
       <div className="mx-auto w-full max-w-6xl px-6 py-12">
         <header className="mb-8 flex items-center justify-between">
           <div className="text-2xl font-black tracking-tight text-[var(--brand-900)]">KeroKume</div>
-          <button className="rounded-full bg-[var(--brand-700)] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[var(--brand-800)] cursor-pointer">
+          <button onClick={() => nav('/login')} className="rounded-full bg-[var(--brand-700)] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[var(--brand-800)] cursor-pointer">
             Entrar
           </button>
         </header>

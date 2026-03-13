@@ -1,0 +1,99 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: linear-gradient(
+    to bottom,
+    var(--bg-from),
+    var(--bg-via),
+    var(--bg-to)
+  );
+}
+
+.login-card {
+  width: 100%;
+  max-width: 28rem;
+  border: 1px solid var(--accent-100);
+  background: var(--card-bg);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgb(124 45 18 / 0.2);
+}
+
+.login-badge {
+  display: inline-block;
+  background: var(--brand-100);
+  color: var(--brand-800);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.login-brand h1 {
+  margin: 0.75rem 0 0;
+  color: var(--brand-950);
+  font-size: 2rem;
+}
+
+.login-subtitle {
+  margin: 0.5rem 0 0;
+  color: var(--text-muted);
+}
+
+.login-form {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.login-form label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--brand-900);
+}
+
+.login-form input textarea {
+  border: 1px solid var(--accent-200);
+  border-radius: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  font-size: 0.95rem;
+  color: var(--text-base);
+  background: #fff;
+}
+
+.login-form input:focus textarea:focus {
+  outline: 2px solid var(--brand-300);
+  outline-offset: 1px;
+}
+
+.login-form button {
+  margin-top: 0.45rem;
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.8rem 1rem;
+  color: #fff;
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--brand-700), var(--accent-600));
+  cursor: pointer;
+}
+
+.login-form button:hover {
+  filter: brightness(0.96);
+}
+
+.login-footer {
+  margin-top: 1rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.login-footer a {
+  color: var(--brand-800);
+  font-weight: 700;
+  text-decoration: none;
+}

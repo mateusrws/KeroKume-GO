@@ -37,6 +37,16 @@ func FindAllMenu(ctx *gin.Context) ([]schemas.Menu, error) {
 	return menus, nil
 }
 
+func FindActiveMenu(ctx *gin.Context, restaurantId uuid.UUID) (schemas.Menu, error) {
+	var menu schemas.Menu
+	if err := db.Where("restaurant_id = ? AND is_active = ?", restaurantId, true).First(&menu).Error; err != nil {
+		logger.Errf("error finding active menu: %v", err)
+		utils.SendError(ctx, http.StatusInternalServerError, "error finding active menu")
+		return schemas.Menu{}, err
+	}
+	return menu, nil
+}
+
 func FindAllByRestaurantId(restaurantId uuid.UUID, ctx *gin.Context) ([]schemas.Menu, error) {
 	var menus []schemas.Menu
 	if err := db.Where("restaurant_id = ?", restaurantId).Find(&menus).Error; err != nil {

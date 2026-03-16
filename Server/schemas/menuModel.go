@@ -8,4 +8,5 @@ type Menu struct {
 	BaseModel
 	Name         string
 	RestaurantId uuid.UUID
+	IsActive     bool
 }

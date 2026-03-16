@@ -13,7 +13,7 @@ import (
 	"kerokume-go/utils"
 )
 
-// TODO Configurar o CRUD do Menu para o swagger 
+// TODO Configurar o CRUD do Menu para o swagger
 
 // @Summary Create Menu
 // @Description Create a new menu for a restaurant
@@ -113,6 +113,64 @@ func GetMenuServiceGetByRestaurantID(ctx *gin.Context) {
 	utils.SendSuccessArray(ctx, "find-all-menus-by-restaurant-id", data)
 }
 
+
+func GetActiveMenuService(ctx *gin.Context) {
+	restaurantId := utils.GetIdFromJwt(ctx)
+	menu, err := repos.FindActiveMenu(ctx, restaurantId)
+	if err != nil {
+		utils.SendError(ctx, http.StatusInternalServerError, "error finding active menu")
+		return
+	}
+	
+	data := contracts.MenuResponse{
+		Id: menu.RestaurantId,
+		Name: menu.Name,
+	}
+	
+	utils.SendSuccessSimple(ctx, "find-active-menu", data)
+}
+
+func AlterMenuActive(ctx *gin.Context){
+	restaurantId := utils.GetIdFromJwt(ctx)
+	menuIdReceive := ctx.Param("menu-id")
+	menuId, err := uuid.Parse(menuIdReceive)
+	if err != nil {
+		utils.SendError(ctx, http.StatusBadRequest, "invalid menu id")
+		return
+	}
+	
+	// Find the active menu
+	
+	menu, err := repos.FindActiveMenu(ctx, restaurantId)
+	if err != nil {
+		utils.SendError(ctx, http.StatusInternalServerError, "error finding active menu")
+		return
+	}
+	
+	// Switch the active menu
+	menu.IsActive = !menu.IsActive
+	
+	if err := repos.UpdateMenu(utils.GetIdFromJwt(ctx), menu.ID, &menu, ctx); err != nil {
+		utils.SendError(ctx, http.StatusInternalServerError, "error updating menu")
+		return
+	}
+	
+	// Find the menu selected by user
+ 	menuAlter, err := repos.FindUniqueMenu(menuId, ctx)
+ 	if err != nil {
+		utils.SendError(ctx, http.StatusInternalServerError, "error finding menu received")
+		return
+	}
+	
+	// Turn on menu selected
+	menuAlter.IsActive = true
+	if err := repos.UpdateMenu(utils.GetIdFromJwt(ctx),menuAlter.ID , &menuAlter, ctx); err != nil {
+		utils.SendError(ctx, http.StatusInternalServerError, "error updating menu")
+		return
+	}
+	
+	utils.SendSuccessSimple(ctx, "alter-menu-active", menu)
+}
 
 // @Summary Update Menu
 // @Description Update menu by id

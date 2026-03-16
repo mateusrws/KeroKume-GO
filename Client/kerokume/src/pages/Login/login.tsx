@@ -48,13 +48,15 @@ export const Login = () => {
         nav('/my-menus')
       }, 1200)
 
-    } catch (error: any) {
+    } catch (error: unknown) {
 
       console.error(error)
 
-      toast.error(
-        error?.response?.data?.message || "Erro ao fazer login"
-      )
+      const errorMessage = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined
+
+      toast.error(errorMessage ?? "Erro ao fazer login")
 
     } finally {
       setLoading(false)

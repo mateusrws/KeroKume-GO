@@ -1,36 +1,29 @@
-// AuthContext.js
-import { createContext, useContext, useState, useEffect } from 'react';
+import { useState } from 'react'
+import type { PropsWithChildren } from 'react'
+import { AuthContext } from './context'
 
-const AuthContext = createContext(null);
+type AuthUser = {
+  name?: string
+  email?: string
+}
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+const initialUser = (() => {
+  const storedUser = localStorage.getItem('user')
+  return storedUser ? (JSON.parse(storedUser) as AuthUser) : null
+})()
 
-  useEffect(() => {
-    // Verifica no localStorage se já existe sessão ativa
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
-  }, []);
+export const AuthProvider = ({ children }: PropsWithChildren) => {
+  const [user, setUser] = useState<AuthUser | null>(initialUser)
 
-  const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
-  };
+  const login = (userData: AuthUser) => {
+    setUser(userData)
+    localStorage.setItem('user', JSON.stringify(userData))
+  }
 
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
-  };
+    setUser(null)
+    localStorage.removeItem('user')
+  }
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-export const useAuth = () => useContext(AuthContext);
+  return <AuthContext.Provider value={{ user, login, logout, loading: false }}>{children}</AuthContext.Provider>
+}

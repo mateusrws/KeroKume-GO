@@ -1,4 +1,4 @@
-export type Menu = {
-  name: string,
+export type MenuLegacy = {
+  name: string
   restaurantId: string
 }

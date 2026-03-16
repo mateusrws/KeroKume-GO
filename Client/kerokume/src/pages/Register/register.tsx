@@ -4,7 +4,7 @@ import "./register.css"
 
 export const Register = () => {
   
-  const SERVER_URL = import.meta.env.VITE_SERVER_URL
+  const BASE_URL = import.meta.env.VITE_BASE_URL
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -21,7 +21,7 @@ export const Register = () => {
     console.log(data)
 
     try {
-      const response = await axios.post(SERVER_URL, data)
+      const response = await axios.post(BASE_URL+"/restaurant", data)
 
       console.log("Usuário criado:", response.data)
 

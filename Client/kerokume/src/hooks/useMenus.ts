@@ -14,13 +14,26 @@ export function useMenus(restaurantId: string | null) {
   const [error, setError] = useState<string | null>(null)
 
   const loadMenus = useCallback(async () => {
-    if (!restaurantId) return
+    if (!restaurantId) {
+      setMenus([])
+      setError('Não foi possível identificar o restaurante no token de autenticação.')
+      return
+    }
 
     setLoading(true)
     setError(null)
 
     try {
       const data = await getMenusByRestaurant(restaurantId)
+
+      const activeMenuId = localStorage.getItem('active-menu-id')
+      const hasActiveMenu = data.some((menu) => menu.isActive)
+
+      if (!hasActiveMenu && activeMenuId) {
+        setMenus(data.map((menu) => ({ ...menu, isActive: menu.id === activeMenuId })))
+        return
+      }
+
       setMenus(data)
     } catch {
       setError('Não foi possível carregar os cardápios.')
@@ -52,7 +65,12 @@ export function useMenus(restaurantId: string | null) {
 
   async function handleActivate(menuId: string) {
     await activateMenu(menuId)
-    await loadMenus()
+
+    localStorage.setItem('active-menu-id', menuId)
+    setMenus((currentMenus) => currentMenus.map((menu) => ({
+      ...menu,
+      isActive: menu.id === menuId,
+    })))
   }
 
   return {

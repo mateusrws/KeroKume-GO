@@ -6,19 +6,23 @@ type MenuApi = {
   id?: string
   Id?: string
   ID?: string
+  menuId?: string
+  menu_id?: string
   name?: string
   Name?: string
   isActive?: boolean
   IsActive?: boolean
+  is_active?: boolean
+  Active?: boolean
   restaurantId?: string
   RestaurantId?: string
 }
 
 function normalizeMenu(menu: MenuApi): Menu {
   return {
-    id: menu.id ?? menu.Id ?? menu.ID ?? '',
+    id: menu.id ?? menu.Id ?? menu.ID ?? menu.menuId ?? menu.menu_id ?? '',
     name: menu.name ?? menu.Name ?? 'Sem nome',
-    isActive: menu.isActive ?? menu.IsActive ?? false,
+    isActive: menu.isActive ?? menu.IsActive ?? menu.is_active ?? menu.Active ?? false,
     restaurantId: menu.restaurantId ?? menu.RestaurantId,
   }
 }

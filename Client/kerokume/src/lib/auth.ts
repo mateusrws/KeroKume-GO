@@ -13,9 +13,18 @@ export function getRestaurantIdFromToken() {
 
   try {
     const normalized = payload.replace(/-/g, '+').replace(/_/g, '/')
-    const json = atob(normalized)
-    const data = JSON.parse(json) as { Sum?: string; sum?: string }
-    return data.Sum ?? data.sum ?? null
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=')
+    const json = atob(padded)
+    const data = JSON.parse(json) as {
+      Sum?: string
+      sum?: string
+      sub?: string
+      id?: string
+      restaurantId?: string
+      restaurant_id?: string
+    }
+
+    return data.Sum ?? data.sum ?? data.restaurantId ?? data.restaurant_id ?? data.sub ?? data.id ?? null
   } catch {
     return null
   }
